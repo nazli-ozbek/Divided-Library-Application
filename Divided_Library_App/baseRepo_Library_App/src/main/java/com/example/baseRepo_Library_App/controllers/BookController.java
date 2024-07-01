@@ -12,18 +12,34 @@ import java.net.http.HttpRequest;
 @RequestMapping("api/base/books")
 public class BookController {
 
-    public String requestToString(BookRequest bookRequest){
-        ObjectMapper objectMapper = new ObjectMapper();
-        return null;//objectMapper.writeValueAsString(bookRequest);
+    public String requestToString(BookRequest bookRequest) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            return objectMapper.writeValueAsString(bookRequest);
+        } catch (Exception e) {
+            return e.getMessage();
+        }
     }
 
     @GetMapping("/getall")
-    public void getAllBooks(BookRequest bookRequest) {
-        try {
+    public void getAllBooks() {
+    try{
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(new URI("http://localhost:8081/books/getall"))
+                .GET()
+                .build();
+    } catch(Exception e)
+    {
+        e.getMessage();
+    }
+}
 
+    @PostMapping("/getbooks")
+    public void getBooks(BookRequest bookRequest) {
+        try {
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(new URI("http://postman-echo.com/get"))
-                    .GET()
+                    .uri(new URI("http://localhost:8081/books/getbooks"))
+                    .POST(HttpRequest.BodyPublishers.ofString(requestToString(bookRequest)))
                     .build();
         } catch (Exception e) {
             e.getMessage();
