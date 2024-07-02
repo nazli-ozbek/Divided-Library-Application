@@ -7,8 +7,8 @@ import java.util.Date;
 
 public class BorrowRequest {
     private long id;
-    private int bookId;
-    private int memberId;
+    private long bookId;
+    private long memberId;
     private Date borrowDate;
     private Date returnDate;
 }
