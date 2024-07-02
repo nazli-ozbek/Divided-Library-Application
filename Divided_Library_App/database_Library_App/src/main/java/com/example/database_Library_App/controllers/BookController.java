@@ -3,10 +3,12 @@ package com.example.database_Library_App.controllers;
 import com.example.database_Library_App.dto.BookRequest;
 import com.example.database_Library_App.entities.Book;
 import com.example.database_Library_App.repositories.BookRepository;
+import com.example.database_Library_App.services.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -14,86 +16,67 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("api/database/books")
 public class BookController {
-    private final BookRepository bookRepository;
+    private final BookService bookService;
 
     @Autowired
-    public BookController(BookRepository bookRepository) {
-        this.bookRepository = bookRepository;
+    public BookController(BookService bookService) {
+        this.bookService = bookService;
     }
 
     @GetMapping("/getall")
-    public List<Book> getAllBooks() {
+    public List<Book> getAllBooks(){
         try {
-            return bookRepository.findAll();
+            return bookService.getAllBooks();
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
     }
 
-    @PostMapping("/getbooks")
+    @GetMapping("/getbooks")
     public List<Book> getBooks(@RequestBody BookRequest bookRequest) {
-        List<Book> books = bookRepository.findAll();
-        return books.stream()
-                .filter(book -> (bookRequest.getName() == null || book.getName().equals(bookRequest.getName())) &&
-                        (bookRequest.getAuthor() == null || book.getAuthor().equals(bookRequest.getAuthor())) &&
-                        (bookRequest.getPublisher() == null || book.getPublisher().equals(bookRequest.getPublisher())) &&
-                        (bookRequest.getIsAvailable() == null || book.getAvailable().equals(bookRequest.getIsAvailable())))
-                .collect(Collectors.toList());
-
-    }
-
-    @PostMapping("/create")
-    public Book createBook(@RequestBody BookRequest bookRequest) {
         try {
-            Book book = new Book(bookRequest.getName(), bookRequest.getAuthor(), bookRequest.getPublisher(), bookRequest.getIsAvailable());
-            return bookRepository.save(book);
+            return bookService.getBooks(bookRequest.getName(),bookRequest.getAuthor(), bookRequest.getPublisher(),bookRequest.getIsAvailable());
         } catch (Exception e) {
-            e.getMessage();
             return null;
         }
     }
 
-    @DeleteMapping("/delete")
-    public Book deleteBook(@RequestBody BookRequest bookRequest) {
+    @PostMapping("/create")
+    public List<Book> createBook(@RequestBody BookRequest bookRequest) {
         try {
-            Book book = bookRepository.findById(bookRequest.getId()).get();
-            if (bookRepository.existsById(bookRequest.getId())) {
-                bookRepository.deleteById(bookRequest.getId());
-            } else {
-                throw new RuntimeException("Book not found!");
-            }
-            return book;
+            Book book = new Book(bookRequest.getName(), bookRequest.getAuthor(), bookRequest.getPublisher(), true);
+            Book created = bookService.createBook(book);
+            List<Book> list = new ArrayList<>();
+            list.add(created);
+            return list;
         } catch (Exception e) {
-            e.getMessage();
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/delete")
+    public List<Book> deleteBook(@RequestBody BookRequest bookRequest) {
+        try {
+            List<Book> list = new ArrayList<>();
+            list.add(bookService.getBookByID(bookRequest.getId()));
+            bookService.deleteBook(bookRequest.getId());
+            return list;
+        } catch (Exception e) {
             return null;
         }
     }
 
     @PutMapping("/update")
-    public Book updateBook(@RequestBody BookRequest bookRequest) {
+    public List<Book> updateBook(@RequestBody BookRequest bookRequest) {
         try {
-            Book newBook = new Book(bookRequest.getName(), bookRequest.getAuthor(), bookRequest.getPublisher(), bookRequest.getIsAvailable());
-            Optional<Book> oldBookOptional = bookRepository.findById(bookRequest.getId());
-            if (oldBookOptional.isPresent()) {
-                Book oldBook = oldBookOptional.get();
-                if (!ObjectUtils.isEmpty(newBook.getName())) {
-                    oldBook.setName(newBook.getName());
-                }
-                if (!ObjectUtils.isEmpty(newBook.getAuthor())) {
-                    oldBook.setAuthor(newBook.getAuthor());
-                }
-                if (!ObjectUtils.isEmpty(newBook.getPublisher())) {
-                    oldBook.setPublisher(newBook.getPublisher());
-                }
-                if (!ObjectUtils.isEmpty(newBook.getAvailable())) {
-                    oldBook.setAvailable(newBook.getAvailable());
-                }
-                return bookRepository.save(oldBook);
-            }
-            else{return null;}
+            Book newBook = new Book(bookRequest.getName(), bookRequest.getAuthor(), bookRequest.getPublisher(),bookRequest.getIsAvailable());
+            Book updated = bookService.updateBook(bookRequest.getId(), newBook);
+            List<Book> list = new ArrayList<>();
+            list.add(updated);
+            return list;
         } catch (Exception e) {
-            e.getMessage();
             return null;
         }
     }
+
 }

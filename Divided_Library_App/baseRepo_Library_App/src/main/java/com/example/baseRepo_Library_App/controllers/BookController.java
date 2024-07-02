@@ -2,15 +2,24 @@ package com.example.baseRepo_Library_App.controllers;
 
 
 import com.example.baseRepo_Library_App.dto.BookRequest;
+import com.example.baseRepo_Library_App.dto.BookResponse;
 import com.example.baseRepo_Library_App.models.Book;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
+import java.net.ProxySelector;
 import java.net.URI;
+import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequiredArgsConstructor
@@ -28,17 +37,30 @@ public class BookController {
     }
 
     @GetMapping("/getall")
-    public ResponseEntity<> getAllBooks(@RequestBody BookRequest bookRequest) {
+    public List<Book> getAllBooks(@RequestBody BookRequest bookRequest) {
     try{
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(new URI("http://localhost:8081/api/database/books/getall"))
-                .GET()
-                .build();
+        final String uri = "http://localhost:8083/api/database/books/getall";
+
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<List<Book>> response = restTemplate.exchange(
+                uri,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<Book>>() {}
+        );
+
+        List<Book> result = response.getBody();
+
+        System.out.println(result);
+
+        return result;
+
     } catch(Exception e)
     {
         e.getMessage();
+        return null;
     }
-}
+    }
 
     @PostMapping("/getbooks")
     public void getBooks(BookRequest bookRequest) {
