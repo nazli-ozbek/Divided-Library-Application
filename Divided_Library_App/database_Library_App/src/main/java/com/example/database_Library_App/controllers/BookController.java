@@ -32,12 +32,12 @@ public class BookController {
         }
     }
 
-    @GetMapping("/getbooks")
+    @PostMapping("/getbooks")
     public List<Book> getBooks(@RequestBody BookRequest bookRequest) {
         try {
             return bookService.getBooks(bookRequest.getName(),bookRequest.getAuthor(), bookRequest.getPublisher(),bookRequest.getIsAvailable());
         } catch (Exception e) {
-            return null;
+            throw new RuntimeException(e.getMessage());
         }
     }
 
@@ -57,12 +57,9 @@ public class BookController {
     @DeleteMapping("/delete")
     public List<Book> deleteBook(@RequestBody BookRequest bookRequest) {
         try {
-            List<Book> list = new ArrayList<>();
-            list.add(bookService.getBookByID(bookRequest.getId()));
-            bookService.deleteBook(bookRequest.getId());
-            return list;
+            return bookService.deleteBook(bookRequest.getId());
         } catch (Exception e) {
-            return null;
+            throw new RuntimeException(e.getMessage());
         }
     }
 

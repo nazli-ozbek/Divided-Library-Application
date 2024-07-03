@@ -8,18 +8,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
-import java.net.ProxySelector;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequiredArgsConstructor
@@ -37,7 +32,7 @@ public class BookController {
     }
 
     @GetMapping("/getall")
-    public List<Book> getAllBooks(@RequestBody BookRequest bookRequest) {
+    public BookResponse getAllBooks() {
     try{
         final String uri = "http://localhost:8083/api/database/books/getall";
 
@@ -53,7 +48,7 @@ public class BookController {
 
         System.out.println(result);
 
-        return result;
+        return new BookResponse("200",result,"All books");
 
     } catch(Exception e)
     {
@@ -63,50 +58,107 @@ public class BookController {
     }
 
     @PostMapping("/getbooks")
-    public void getBooks(BookRequest bookRequest) {
+    public BookResponse getBooks(@RequestBody BookRequest bookRequest) {
         try {
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(new URI("http://localhost:8081/api/database/books/getbooks"))
-                    .POST(HttpRequest.BodyPublishers.ofString(requestToString(bookRequest)))
-                    .build();
+            final String uri = "http://localhost:8083/api/database/books/getbooks";
+
+            RestTemplate restTemplate = new RestTemplate();
+            HttpEntity<BookRequest> requestEntity = new HttpEntity<>(bookRequest);
+
+            ResponseEntity<List<Book>> response = restTemplate.exchange(
+                    uri,
+                    HttpMethod.POST,
+                    requestEntity,
+                    new ParameterizedTypeReference<List<Book>>() {}
+            );
+
+            List<Book> result = response.getBody();
+
+            System.out.println(result);
+
+            return new BookResponse("200", result, "List of books.");
         } catch (Exception e) {
             e.getMessage();
+            return new BookResponse("500", null, "An error occurred");
         }
     }
 
     @PostMapping("/create")
-    public void createBooks(BookRequest bookRequest) {
+    public BookResponse createBooks(@RequestBody BookRequest bookRequest) {
         try {
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(new URI("http://localhost:8081/api/database/books/create"))
-                    .POST(HttpRequest.BodyPublishers.ofString(requestToString(bookRequest)))
-                    .build();
+            final String uri = "http://localhost:8083/api/database/books/create";
+
+            RestTemplate restTemplate = new RestTemplate();
+            HttpEntity<BookRequest> requestEntity = new HttpEntity<>(bookRequest);
+
+            ResponseEntity<List<Book>> response = restTemplate.exchange(
+                    uri,
+                    HttpMethod.POST,
+                    requestEntity,
+                    new ParameterizedTypeReference<List<Book>>() {}
+            );
+
+            List<Book> result = response.getBody();
+
+            System.out.println(result);
+
+            return new BookResponse("200", result, "Book created");
         } catch (Exception e) {
             e.getMessage();
+            return new BookResponse("500", null, "An error occurred");
         }
     }
 
     @DeleteMapping("/delete")
-    public void deleteBooks(BookRequest bookRequest) {
-        try {
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(new URI("http://localhost:8081/api/database/books/delete"))
-                    .POST(HttpRequest.BodyPublishers.ofString(requestToString(bookRequest)))
-                    .build();
-        } catch (Exception e) {
-            e.getMessage();
-        }
+    public BookResponse deleteBooks(@RequestBody BookRequest bookRequest) {
+        final String uri = "http://localhost:8083/api/database/books/delete";
+        try{
+
+        RestTemplate restTemplate = new RestTemplate();
+        HttpEntity<BookRequest> requestEntity = new HttpEntity<>(bookRequest);
+
+        ResponseEntity<List<Book>> response = restTemplate.exchange(
+                uri,
+                HttpMethod.DELETE,
+                requestEntity,
+                new ParameterizedTypeReference<List<Book>>() {}
+        );
+
+        List<Book> result = response.getBody();
+
+        System.out.println(result);
+
+        return new BookResponse("200", result, "Book deleted.");
+    } catch (Exception e) {
+        e.getMessage();
+        return new BookResponse("500", null, "An error occurred");
+    }
     }
 
-    @PostMapping("/update")
-    public void updateBooks(BookRequest bookRequest) {
+    @PutMapping("/update")
+    public BookResponse updateBooks(@RequestBody BookRequest bookRequest) {
+        final String uri = "http://localhost:8083/api/database/books/update";
         try {
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(new URI("http://localhost:8081/api/database/books/update"))
-                    .POST(HttpRequest.BodyPublishers.ofString(requestToString(bookRequest)))
-                    .build();
+
+            RestTemplate restTemplate = new RestTemplate();
+            HttpEntity<BookRequest> requestEntity = new HttpEntity<>(bookRequest);
+
+            ResponseEntity<List<Book>> response = restTemplate.exchange(
+                    uri,
+                    HttpMethod.PUT,
+                    requestEntity,
+                    new ParameterizedTypeReference<List<Book>>() {
+                    }
+            );
+
+            List<Book> result = response.getBody();
+
+            System.out.println(result);
+
+            return new BookResponse("200", result, "Book deleted.");
         } catch (Exception e) {
             e.getMessage();
+            return new BookResponse("500", null, "error");
         }
     }
 }

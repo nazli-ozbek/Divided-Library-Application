@@ -9,10 +9,10 @@ import java.util.List;
 @Data
 public class BookResponse {
     private String code;
-    private String response;
+    private List<Book> response;
     private String message;
 
-    public BookResponse(String code, String response, String message){
+    public BookResponse(String code, List<Book> response, String message){
         this.code = code;
         this.response = response;
         this.message = message;

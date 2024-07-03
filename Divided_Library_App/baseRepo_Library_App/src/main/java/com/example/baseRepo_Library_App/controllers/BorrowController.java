@@ -1,13 +1,20 @@
 package com.example.baseRepo_Library_App.controllers;
 
 import com.example.baseRepo_Library_App.dto.BorrowRequest;
+import com.example.baseRepo_Library_App.models.Book;
+import com.example.baseRepo_Library_App.models.Borrow;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
 import java.net.http.HttpRequest;
+import java.util.List;
 
 public class BorrowController {
     public String requestToString(BorrowRequest borrowRequest) {
@@ -20,15 +27,27 @@ public class BorrowController {
     }
 
     @GetMapping("/getall")
-    public void getAllBorrows() {
+    public List<Borrow> getAllBorrows() {
         try{
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(new URI("http://localhost:8081/api/database/borrows/getall"))
-                    .GET()
-                    .build();
+                final String uri = "http://localhost:8083/api/database/borrows/getall";
+
+                RestTemplate restTemplate = new RestTemplate();
+                ResponseEntity<List<Borrow>> response = restTemplate.exchange(
+                        uri,
+                        HttpMethod.GET,
+                        null,
+                        new ParameterizedTypeReference<List<Borrow>>() {}
+                );
+
+                List<Borrow> result = response.getBody();
+
+                System.out.println(result);
+
+                return result;
         } catch(Exception e)
         {
             e.getMessage();
+            return  null;
         }
     }
 

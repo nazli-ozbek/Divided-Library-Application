@@ -21,7 +21,8 @@ public class Book implements Serializable {
     private String publisher;
     @Column(name = "isAvailable")
     private Boolean isAvailable;
-    @OneToMany(mappedBy = "book")
+
+    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Borrow> borrows;
 
 
