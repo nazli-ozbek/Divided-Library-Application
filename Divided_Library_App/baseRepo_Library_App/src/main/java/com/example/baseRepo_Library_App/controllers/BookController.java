@@ -22,15 +22,6 @@ import java.util.List;
 @RequestMapping("api/base/books")
 public class BookController {
 
-    public String requestToString(BookRequest bookRequest) {
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            return objectMapper.writeValueAsString(bookRequest);
-        } catch (Exception e) {
-            return e.getMessage();
-        }
-    }
-
     @GetMapping("/getall")
     public BookResponse getAllBooks() {
     try{
@@ -155,7 +146,7 @@ public class BookController {
 
             System.out.println(result);
 
-            return new BookResponse("200", result, "Book deleted.");
+            return new BookResponse("200", result, "Book updated.");
         } catch (Exception e) {
             e.getMessage();
             return new BookResponse("500", null, "error");

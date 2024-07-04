@@ -1,7 +1,11 @@
 package com.example.baseRepo_Library_App.models;
 
+import lombok.Data;
+
 import java.util.Date;
 
+
+@Data
 public class Borrow {
     private Long id;
     private Book book;

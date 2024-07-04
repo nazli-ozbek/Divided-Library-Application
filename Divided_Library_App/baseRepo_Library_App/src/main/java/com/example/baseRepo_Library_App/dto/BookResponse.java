@@ -12,9 +12,9 @@ public class BookResponse {
     private List<Book> response;
     private String message;
 
-    public BookResponse(String code, List<Book> response, String message){
+    public BookResponse(String code, List<Book> books, String message){
         this.code = code;
-        this.response = response;
+        this.response = books;
         this.message = message;
     }
 }

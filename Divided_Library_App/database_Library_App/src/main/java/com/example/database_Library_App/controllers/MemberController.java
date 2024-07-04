@@ -32,7 +32,7 @@ public class MemberController {
         }
     }
 
-    @GetMapping("/getmembers")
+    @PostMapping("/getmembers")
     public List<Member> getMembers(@RequestBody MemberRequest memberRequest) {
         try {
             return memberService.getMembers(memberRequest.getName(), memberRequest.getSurname(), memberRequest.getPhoneNumber());

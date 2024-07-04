@@ -35,7 +35,7 @@ public class BorrowController {
         }
     }
 
-    @GetMapping("/getborrows")
+    @PostMapping("/getborrows")
     public List<Borrow> getBorrows(@RequestBody BorrowRequest borrowRequest) {
         try {
             return borrowService.getBorrows(borrowRequest.getBookId(),borrowRequest.getMemberId(),borrowRequest.getBorrowDate(),borrowRequest.getReturnDate());

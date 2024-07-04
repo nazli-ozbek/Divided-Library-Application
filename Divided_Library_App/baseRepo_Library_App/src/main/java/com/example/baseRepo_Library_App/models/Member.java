@@ -1,5 +1,8 @@
 package com.example.baseRepo_Library_App.models;
 
+import lombok.Data;
+
+@Data
 public class Member {
     private Long id;
     private String name;
