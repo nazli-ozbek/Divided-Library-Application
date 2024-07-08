@@ -1,6 +1,8 @@
 package com.example.database_Library_App.controllers;
 
+import com.example.database_Library_App.dto.BookRequest;
 import com.example.database_Library_App.dto.MemberRequest;
+import com.example.database_Library_App.entities.Book;
 import com.example.database_Library_App.entities.Member;
 import com.example.database_Library_App.repositories.MemberRepository;
 import com.example.database_Library_App.services.MemberService;
@@ -41,6 +43,18 @@ public class MemberController {
         }
     }
 
+    @PostMapping("/getbyid") List<Member> getMemberById(@RequestBody BookRequest bookRequest){
+        try {
+            List<Member> list = new ArrayList<>();
+            Member found = memberService.getMemberByID(bookRequest.getId());
+            list.add(found);
+            return list;
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
+
+    }
+
     @PostMapping("/create")
     public List<Member> createMember(@RequestBody MemberRequest memberRequest) {
         try {
@@ -69,7 +83,7 @@ public class MemberController {
     @PutMapping("/update")
     public List<Member> updateMember(@RequestBody MemberRequest memberRequest) {
         try {
-            Member newMember = new Member(memberRequest.getName(),memberRequest.getSurname(), memberRequest.getPhoneNumber());
+            Member newMember = new Member(memberRequest.getName(),memberRequest.getSurname(), memberRequest.getPhoneNumber(), memberRequest.isReliable());
             Member updated = memberService.updateMember(memberRequest.getId(),newMember);
             List<Member> list = new ArrayList<>();
             list.add(updated);

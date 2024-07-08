@@ -19,13 +19,25 @@ public class Member implements Serializable {
     private String surname;
     @Column(name = "phoneNumber")
     private String phoneNumber;
+
+    @Column(name = "reliable")
+    private Boolean reliable;
+
     @OneToMany(mappedBy = "member")
     private List<Borrow> borrows;
+
+    public Member(String name, String surname, String phoneNumber, boolean reliable){
+        this.name = name;
+        this.surname = surname;
+        this. phoneNumber = phoneNumber;
+        this.reliable = reliable;
+    }
 
     public Member(String name, String surname, String phoneNumber){
         this.name = name;
         this.surname = surname;
         this. phoneNumber = phoneNumber;
+        this.reliable = true;
     }
 
     public long getId() {
@@ -58,6 +70,14 @@ public class Member implements Serializable {
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+
+    public Boolean getReliable() {
+        return reliable;
+    }
+
+    public void setReliable(Boolean reliable) {
+        this.reliable = reliable;
     }
 
     @Override

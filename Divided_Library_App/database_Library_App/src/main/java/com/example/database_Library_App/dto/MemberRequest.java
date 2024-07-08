@@ -8,4 +8,5 @@ public class MemberRequest {
     private String name;
     private String surname;
     private String phoneNumber;
+    private boolean isReliable;
 }

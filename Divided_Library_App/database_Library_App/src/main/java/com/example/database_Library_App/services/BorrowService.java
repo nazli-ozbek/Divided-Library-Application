@@ -46,14 +46,17 @@ public class BorrowService {
         return borrowRepository.findById(id);
     }
 
-    public Borrow createBorrow(long bookId, long memberId, Date borrowDate, Date returnDate){
-        Book borrowBook = bookService.getBookByID(bookId);
-        Member borrowMember = memberService.getMemberByID(memberId);
-        if(!borrowBook.getAvailable()){
+    public Borrow createBorrow(Borrow borrow){
+        if(!borrow.getBook().getAvailable()){
+            System.out.println("book!");
             throw new RuntimeException("Book is not available!");
         }
-        borrowBook.setAvailable(false);
-        return borrowRepository.save(new Borrow(borrowBook,borrowMember,borrowDate,returnDate));
+        if(!borrow.getMember().getReliable()){
+            System.out.println("member!");
+            throw new RuntimeException("Member is not reliable!");
+        }
+        borrow.getBook().setAvailable(false);
+        return borrowRepository.save(borrow);
     }
 
     public Borrow updateBorrow(long id, long bookId, long memberId, Date borrowDate, Date returnDate){

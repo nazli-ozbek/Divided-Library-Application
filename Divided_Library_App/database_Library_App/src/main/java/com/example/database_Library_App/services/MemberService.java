@@ -51,7 +51,9 @@ public class MemberService {
                 oldMember.setSurname(newMember.getSurname());}
             if(!ObjectUtils.isEmpty(newMember.getPhoneNumber())){
                 oldMember.setPhoneNumber(newMember.getPhoneNumber());}
-
+            if(!ObjectUtils.isEmpty(newMember.getReliable())){
+                oldMember.setReliable(newMember.getReliable());
+            }
             return memberRepository.save(oldMember);
         }
         else{

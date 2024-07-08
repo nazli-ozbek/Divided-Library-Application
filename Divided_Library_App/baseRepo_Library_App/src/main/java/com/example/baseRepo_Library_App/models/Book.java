@@ -8,13 +8,13 @@ public class Book {
     private String name;
     private String author;
     private String publisher;
-    private Boolean isAvailable;
+    private Boolean available;
 
 
-    public Book(String name, String author, String publisher, Boolean isAvailable) {
+    public Book(String name, String author, String publisher, Boolean available) {
         this.name = name;
         this.author = author;
         this.publisher = publisher;
-        this.isAvailable = isAvailable;
+        this.available = available;
     }
 }

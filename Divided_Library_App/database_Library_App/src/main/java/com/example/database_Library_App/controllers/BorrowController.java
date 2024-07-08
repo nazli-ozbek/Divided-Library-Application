@@ -1,11 +1,15 @@
 package com.example.database_Library_App.controllers;
 
 import com.example.database_Library_App.dto.BorrowRequest;
+import com.example.database_Library_App.entities.Book;
 import com.example.database_Library_App.entities.Borrow;
+import com.example.database_Library_App.entities.Member;
 import com.example.database_Library_App.repositories.BookRepository;
 import com.example.database_Library_App.repositories.BorrowRepository;
 import com.example.database_Library_App.repositories.MemberRepository;
+import com.example.database_Library_App.services.BookService;
 import com.example.database_Library_App.services.BorrowService;
+import com.example.database_Library_App.services.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
@@ -20,10 +24,14 @@ import java.util.stream.Collectors;
 @RequestMapping("api/database/borrows")
 public class BorrowController {
     private final BorrowService borrowService;
+    private  BookService bookService;
+    private MemberService memberService;
 
     @Autowired
-    public BorrowController(BorrowService borrowService){
+    public BorrowController(BorrowService borrowService, BookService bookService, MemberService memberService){
         this.borrowService = borrowService;
+        this.bookService = bookService;
+        this.memberService = memberService;
     }
 
     @GetMapping("/getall")
@@ -47,11 +55,15 @@ public class BorrowController {
     @PostMapping("/create")
     public List<Borrow> createBorrow(@RequestBody BorrowRequest borrowRequest ) {
         try {
-            Borrow created = borrowService.createBorrow(borrowRequest.getBookId(), borrowRequest.getMemberId(),borrowRequest.getBorrowDate(),borrowRequest.getReturnDate());
+            Book borrowBook = bookService.getBookByID(borrowRequest.getBookId());
+            Member borrowMember = memberService.getMemberByID(borrowRequest.getMemberId());
+            Borrow borrow = new Borrow(borrowBook, borrowMember, borrowRequest.getBorrowDate(), borrowRequest.getReturnDate());
+            Borrow created = borrowService.createBorrow(borrow);
             List<Borrow> list = new ArrayList<>();
             list.add(created);
             return list;
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
+            System.out.println("Problem with book availability and/or member trustability!");
             return null;
         }
     }

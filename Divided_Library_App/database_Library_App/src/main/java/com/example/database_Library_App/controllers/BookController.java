@@ -41,6 +41,18 @@ public class BookController {
         }
     }
 
+    @PostMapping("/getbyid") List<Book> getBookById(@RequestBody BookRequest bookRequest){
+        try {
+            List<Book> list = new ArrayList<>();
+            Book found = bookService.getBookByID(bookRequest.getId());
+            list.add(found);
+            return list;
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
+
+    }
+
     @PostMapping("/create")
     public List<Book> createBook(@RequestBody BookRequest bookRequest) {
         try {

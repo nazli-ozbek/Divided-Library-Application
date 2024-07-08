@@ -97,7 +97,8 @@ public class BorrowController {
                     uri,
                     HttpMethod.POST,
                     requestEntity,
-                    new ParameterizedTypeReference<List<Borrow>>() {}
+                    new ParameterizedTypeReference<List<Borrow>>() {
+                    }
             );
 
             List<Borrow> result = response.getBody();
@@ -108,6 +109,7 @@ public class BorrowController {
         } catch (Exception e) {
             e.getMessage();
             return new BorrowResponse("500", null, "An error occurred");
+
         }
     }
 
@@ -163,4 +165,32 @@ public class BorrowController {
             return new BorrowResponse("500", null, "error");
         }
     }
+    @PostMapping("/order/create")
+    public BorrowResponse createBorrow(@RequestBody BorrowRequest borrowRequest){
+        try {
+            final String uri = "http://localhost:8080/api/order/borrows/create";
+
+            RestTemplate restTemplate = new RestTemplate();
+            HttpEntity<BorrowRequest> requestEntity = new HttpEntity<>(borrowRequest);
+
+            ResponseEntity<List<Borrow>> response = restTemplate.exchange(
+                    uri,
+                    HttpMethod.POST,
+                    requestEntity,
+                    new ParameterizedTypeReference<List<Borrow>>() {}
+            );
+
+            List<Borrow> result = response.getBody();
+
+            if(result != null) {
+                return new BorrowResponse("200", result, "Borrow created.");
+            } else {
+                return new BorrowResponse("204", null, "No Content");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new BorrowResponse("500", null, "An error occurred: " + e.getMessage());
+        }
+    }
+
 }
