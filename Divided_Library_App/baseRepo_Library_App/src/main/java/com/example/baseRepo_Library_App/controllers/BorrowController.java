@@ -13,6 +13,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
@@ -182,10 +183,10 @@ public class BorrowController {
 
             List<Borrow> result = response.getBody();
 
-            if(result != null) {
+            if(!ObjectUtils.isEmpty(result)) {
                 return new BorrowResponse("200", result, "Borrow created.");
             } else {
-                return new BorrowResponse("204", null, "No Content");
+                return new BorrowResponse("204", null, "Check book availability & member trustability.");
             }
         } catch (Exception e) {
             e.printStackTrace();
